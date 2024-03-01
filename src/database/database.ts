@@ -1,5 +1,6 @@
 import {DataSource, DataSourceOptions} from "typeorm";
 import {User} from "../models/user/user.model";
+import {Project} from "../models/project/project.model";
 
 const dbSourceOptions: DataSourceOptions = {
     type: "mysql",
@@ -19,5 +20,5 @@ export const initDatabase = (): Promise<DataSource> => {
     return dataSource.initialize()
 }
 export const userRepository = dataSource.getRepository(User);
-
+export const projectRepository = dataSource.getRepository(Project);
 export default dataSource;
