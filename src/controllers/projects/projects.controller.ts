@@ -16,9 +16,14 @@ export const projectsGet: AuthenticatedController = async (request, response) =>
         }
     });
 
-    const projects = allProjects
+    const filteredProjects = allProjects
         .filter((project) => project.members
             .some((member) => member.id === request.user.id));
+
+    const projects = filteredProjects.map((project) => ({
+        ...project,
+        progression: 50
+    }));
 
     response.status(200).json({
         success: true,
@@ -31,24 +36,23 @@ export const projectsCreate: AuthenticatedController = async (request, response)
     const {name} = request.body;
     const file = request.file;
 
-    const project: Project = {
-        name: name,
-        driveFolderPath: undefined,
-        members: [request.user],
-        messages: [],
-        todos: [],
-    }
+    if (!name)
+        return response.status(422).json({success: false, data: "Name is a required field"})
 
-    project.driveFolderPath = getProjectBaseFilePath(project);
+    const project = new Project()
+    project.name = name;
+    project.members = [request.user];
 
     try {
         const savedProject = await projectRepository.save(project);
         projectSpecHandling(savedProject, file);
+
         return response.status(201).json({
             success: true,
-            data: `Successfully created your new project called ${name}`
+            data: savedProject.id
         });
     } catch (error) {
+        console.error(error);
         return response.status(400).json({
             success: false,
             data: `An error occurred while trying to create your project`

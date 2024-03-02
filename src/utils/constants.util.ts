@@ -1,0 +1,1 @@
+const BOT_USER_ID = "624abe62-9ca5-46ba-adb8-f0daeced9023";
