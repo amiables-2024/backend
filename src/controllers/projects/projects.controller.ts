@@ -31,19 +31,20 @@ export const projectsCreate: AuthenticatedController = async (request, response)
     const {name} = request.body;
     const file = request.file;
 
+    if (!name)
+        return response.status(422).json({success: false, data: "Name is a required field"})
+
     const project: Project = {
         name: name,
-        driveFolderPath: undefined,
         members: [request.user],
         messages: [],
         todos: [],
     }
 
-    project.driveFolderPath = getProjectBaseFilePath(project);
-
     try {
         const savedProject = await projectRepository.save(project);
         projectSpecHandling(savedProject, file);
+
         return response.status(201).json({
             success: true,
             data: `Successfully created your new project called ${name}`

@@ -10,11 +10,13 @@ import path from 'node:path';
 
 const origins = [
     "https://main.d3i9env3ux4lc9.amplifyapp.com",
-    /^http:\/\/localhost:./
+    /^http:\/\/localhost:./,
+    "http://localhost:3000"
 ]
 
 const app: Express = express();
 const server = http.createServer(app);
+
 const io = new socket.Server(server, {
     cors: {
         origin: origins,

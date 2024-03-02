@@ -16,9 +16,6 @@ export class Project {
     @ManyToMany(() => User, (user) => user.projects)
     members: User[];
 
-    @Column()
-    driveFolderPath: string
-
     @ManyToOne(() => Message, (message) => message.project, {
         cascade: true
     })
