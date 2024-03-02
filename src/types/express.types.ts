@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import {User} from "../models/user/user.model";
 
 export type AuthenticatedRequest = Request & { user: User };

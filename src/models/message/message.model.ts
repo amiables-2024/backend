@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
 import {Project} from "../project/project.model";
 import {User} from "../user/user.model";
 
@@ -15,14 +15,10 @@ export class Message {
     @Column()
     createdAt: Date
 
-    @ManyToOne(() => Project, (project) => project.messages, {
-        cascade: true
-    })
+    @ManyToOne(() => Project, (project) => project.messages)
     project: Relation<Project>
 
-    @ManyToOne(() => User, (user) => user.messages, {
-        cascade: true
-    })
+    @ManyToOne(() => User, (user) => user.messages)
     user: Relation<User>
     
     

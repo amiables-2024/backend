@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
+import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Project} from "../project/project.model";
 import {Message} from "../message/message.model";
 import {Todo} from "../todo/todo.model";
@@ -23,19 +23,13 @@ export class User {
     @Column()
     password: string
 
-    @ManyToMany(() => Project, (project) => project.members, {
-        cascade: true
-    })
+    @ManyToMany(() => Project, (project) => project.members)
     projects: Project[]
 
-    @OneToMany(() => Message, (message) => message.user, {
-        cascade: true
-    })
+    @OneToMany(() => Message, (message) => message.user)
     messages: Message[]
 
-    @OneToMany(() => Todo, (todo) => todo.assignee, {
-        cascade: true
-    })
+    @OneToMany(() => Todo, (todo) => todo.assignee)
     todos: Todo[]
 
     @OneToMany(() => UserAvailability, (availability) => availability.user, {

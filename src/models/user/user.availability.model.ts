@@ -1,7 +1,4 @@
-import {Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation} from "typeorm"
-import {Project} from "../project/project.model";
-import {Message} from "../message/message.model";
-import {Todo} from "../todo/todo.model";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
 import {User} from "./user.model";
 
 
@@ -17,9 +14,7 @@ export class UserAvailability {
     @Column()
     endRange: string
 
-    @ManyToOne(() => User, (user) => user.availabilities, {
-        cascade: true
-    })
+    @ManyToOne(() => User, (user) => user.availabilities)
     user: Relation<User>
 
 }

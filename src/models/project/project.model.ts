@@ -13,9 +13,7 @@ export class Project {
     @Column()
     name: string
 
-    @ManyToMany(() => User, (user) => user.projects, {
-        cascade: true
-    })
+    @ManyToMany(() => User, (user) => user.projects)
     members: User[];
 
     @Column()

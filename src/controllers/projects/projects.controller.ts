@@ -3,7 +3,6 @@ import {projectRepository} from "../../database/database";
 import {ArrayContains} from "typeorm"
 import {Project} from "../../models/project/project.model";
 import {getProjectBaseFilePath} from "../../utils/file.util";
-import {signJWT} from "../../utils/jwt.util";
 
 // GET /projects
 export const projectsGet: AuthenticatedController = async (request, response) => {
