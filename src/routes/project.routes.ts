@@ -7,7 +7,7 @@ import {
     projectTodosEdit,
     projectTodosGet
 } from "../controllers/projects/todos/projects.todos.controller";
-import {projectsCreate, projectsGet} from "../controllers/projects/projects.controller";
+import {projectGet, projectsCreate, projectsGet} from "../controllers/projects/projects.controller";
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.get('/', projectsGet)
 router.post('/', fileHandler.single('spec'), projectsCreate)
 
 // GET /projects/:projectId
-router.get('/:projectId', projectsGet);
+router.get('/:projectId', projectGet);
 
 // GET /projects/:projectId/files
 router.get('/:projectId/files', projectFilesGet);

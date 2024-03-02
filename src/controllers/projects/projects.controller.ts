@@ -1,5 +1,5 @@
 import {AuthenticatedController} from "../../types/express.types";
-import {projectRepository} from "../../database/database";
+import {projectRepository, todoRepository} from "../../database/database";
 import {ArrayContains} from "typeorm"
 import {Project} from "../../models/project/project.model";
 import {getProjectBaseFilePath} from "../../utils/file.util";
@@ -84,7 +84,7 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
     }
 
 
-    for (const todo of todos) {
+    await Promise.all(todos.map(async (todo) => {
         try {
             const dbTodo = new Todo();
             dbTodo.title = todo.name;
@@ -92,11 +92,11 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
             dbTodo.status = TodoStatusEnum.PENDING;
             dbTodo.priority = TodoPriorityEnum.MEDIUM;
             dbTodo.project = project;
-            project.todos.push(dbTodo);
+            await todoRepository.save(dbTodo);
         } catch (error) {
 
         }
-    }
+    }));
 
     // TODO Send message.
 }
