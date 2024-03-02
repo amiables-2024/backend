@@ -6,11 +6,11 @@ const env_vars = [
     'S3_ACCESS_KEY', 'S3_ACCESS_KEY_SECRET', 'S3_BUCKET'
 ]
 
-for (const env_var of env_vars) {
-    if (!process.env[env_var]) {
-        throw new Error(`Invalid/Missing environment variable: "${env_var}"`);
-    }
-}
+// for (const env_var of env_vars) {
+//     if (!process.env[env_var]) {
+//         throw new Error(`Invalid/Missing environment variable: "${env_var}"`);
+//     }
+// }
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.S3_ACCESS_KEY!,
