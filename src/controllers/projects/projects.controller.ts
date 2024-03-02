@@ -10,9 +10,15 @@ import {TodoPriorityEnum, TodoStatusEnum} from "../../types/models.types";
 
 // GET /projects
 export const projectsGet: AuthenticatedController = async (request, response) => {
-    const projects = await projectRepository.findBy({
-        members: ArrayContains([request.user])
-    })
+    const allProjects = await projectRepository.find({
+        relations: {
+            members: true
+        }
+    });
+
+    const projects = allProjects
+        .filter((project) => project.members
+            .some((member) => member.id === request.user.id));
 
     response.status(200).json({
         success: true,

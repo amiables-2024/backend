@@ -93,9 +93,12 @@ export const getAvatar = async (user: User): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         // Construct the filepath
         const filePath: string = `avatars/${user.id.toString()}`
-
-        // Attempt to get the file from S3
-        const data = await retrieveFileFromS3(filePath)
-        resolve(data);
+        try {
+            // Attempt to get the file from S3
+            const data = await retrieveFileFromS3(filePath)
+            resolve(data);
+        } catch (error) {
+            reject(error);
+        }
     });
 }
