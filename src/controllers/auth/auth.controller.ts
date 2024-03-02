@@ -27,6 +27,7 @@ export const authRegister: Controller = async (request, response) => {
     user.name = name.trim()
     user.email = email.trim()
     user.password = await hash(password, 10)
+    user.avatar = DEFAULT_AVATAR_IMAGE_BASE64;
 
     const savedUser = await userRepository.save(user);
 
