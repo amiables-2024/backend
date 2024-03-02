@@ -5,8 +5,11 @@ import * as http from "http";
 import * as socket from "socket.io";
 import cors from "cors";
 import {routesRouter} from "./routes/routes";
-import {initDatabase} from "./database/database";
+import {initDatabase, messageRepository, projectRepository, userRepository} from "./database/database";
 import path from 'node:path';
+import {initSocketIOServer} from "./socketio/socketio";
+import {BroadcastMessageData, UserSendMessageData} from "./types/socketio.types";
+import {Message} from "./models/message/message.model";
 
 const origins = [
     "https://main.d3i9env3ux4lc9.amplifyapp.com",
@@ -40,41 +43,42 @@ app.use(routesRouter);
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("join_room", (roomId) => {
-      socket.join(roomId);
-      console.log(`user with id-${socket.id} joined room - ${roomId}`);
+    socket.on("join_room", (projectId) => {
+        socket.join(projectId);
     });
-  
-    socket.on("send_msg", (data) => {
-      console.log(data, "DATA");
-      //This will send a message to a specific room ID
-      socket.to(data.roomId).emit("receive_msg", data);
+
+    socket.on("send_msg", async (data: UserSendMessageData) => {
+        console.log(data, "DATA");
+
+        const broadcastData: BroadcastMessageData = {
+            id: "",
+            content: data.content,
+            createdAt: new Date(),
+            user: {
+                id: data.user.id,
+                name: data.user.name
+            }
+        }
+
+        const project = await projectRepository.findOneBy({id: data.projectId});
+        if (project) {
+            const user = await userRepository.findOneBy({id: data.user.id});
+            if (user) {
+                const message = new Message();
+                message.content = data.content;
+                message.user = user;
+                message.project = project;
+                const savedMessage = await messageRepository.save(message);
+                broadcastData.id = savedMessage.id;
+            }
+        }
+
+        socket.to(data.projectId).emit("receive_msg", broadcastData);
     });
-  
+
     socket.on("disconnect", () => {
-      console.log("A user disconnected:", socket.id);
+        console.log("A user disconnected:", socket.id);
     });
-
-
-    // justin's code above
-
-    socket.emit("me", socket.id);
-
-    socket.on("disconnect", () => {
-        socket.broadcast.emit("callEnded")
-    })
-
-    socket.on("callUser", (data) => {
-        io.to(data.userToCall).emit("callUser", {
-            signal: data.signalData,
-            from: data.from,
-            name: data.name
-        })
-    })
-
-    socket.on("answerCall", data => io.to(data.to).emit("callAccepted", {
-        signal: data.signal
-    }))
 });
 
 initDatabase()
@@ -84,6 +88,7 @@ initDatabase()
         server.listen(serverPort, () => {
             console.log(`Server running on port ${serverPort} (http://localhost:${serverPort})`);
         });
+        initSocketIOServer(io);
     })
     .catch((error) => {
         console.error("Unable to connect to database. Stopping web server.", error)

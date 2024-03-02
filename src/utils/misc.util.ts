@@ -1,4 +1,9 @@
 import {TodoStatusEnum} from "../types/models.types";
+import {Project} from "../models/project/project.model";
+import {getIo} from "../socketio/socketio";
+import {messageRepository, userRepository} from "../database/database";
+import {Message} from "../models/message/message.model";
+import {BroadcastMessageData} from "../types/socketio.types";
 
 /**
  * Checks if an email is valid
@@ -18,4 +23,35 @@ function enumFromStringValue<T>(enm: { [s: string]: T }, value: string): T | und
 
 export const todoStatusFromString = (status: string): TodoStatusEnum | undefined => {
     return enumFromStringValue<TodoStatusEnum>(TodoStatusEnum, status);
+}
+
+/**
+ * Send a message as the bot to a project's channel
+ * @param project
+ * @param content
+ */
+export const sendBotMessage = async (project: Project, content: string) => {
+    const botUser = await userRepository.findOneBy({id: BOT_USER_ID});
+    if (!botUser)
+        return
+
+    const message = new Message();
+    message.content = content;
+    message.user = botUser;
+    message.project = project;
+
+    const savedMessage = await messageRepository.save(message);
+    const io = getIo();
+
+    const broadcastData: BroadcastMessageData = {
+        id: savedMessage.id,
+        content: savedMessage.content,
+        createdAt: new Date(),
+        user: {
+            id: botUser.id,
+            name: botUser.name
+        }
+    }
+
+    io.to(project.id).emit("receive_msg", broadcastData);
 }

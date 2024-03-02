@@ -25,4 +25,5 @@ export const initDatabase = (): Promise<DataSource> => {
 export const userRepository = dataSource.getRepository(User);
 export const projectRepository = dataSource.getRepository(Project);
 export const todoRepository = dataSource.getRepository(Todo);
+export const messageRepository = dataSource.getRepository(Message);
 export default dataSource;

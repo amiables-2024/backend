@@ -1,12 +1,11 @@
 import {AuthenticatedController} from "../../types/express.types";
 import {projectRepository, todoRepository} from "../../database/database";
-import {ArrayContains} from "typeorm"
 import {Project} from "../../models/project/project.model";
-import {getProjectBaseFilePath} from "../../utils/file.util";
 import {extractTextFromPdfBuffer} from "../../utils/pdf.util";
 import {extractTodosFromSpec} from "../../utils/ai.util";
 import {Todo} from "../../models/todo/todo.model";
 import {TodoPriorityEnum, TodoStatusEnum} from "../../types/models.types";
+import {sendBotMessage} from "../../utils/misc.util";
 
 // GET /projects
 export const projectsGet: AuthenticatedController = async (request, response) => {
@@ -45,6 +44,7 @@ export const projectsCreate: AuthenticatedController = async (request, response)
 
     try {
         const savedProject = await projectRepository.save(project);
+        await sendBotMessage(savedProject, "Hi, welcome to your new project. I'm Freckle, your virtual teammate! I'm here to make sure your project goes smoothly.")
         projectSpecHandling(savedProject, file);
 
         return response.status(201).json({
@@ -68,23 +68,23 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
     if (file.mimetype !== "application/pdf")
         return
 
-    let context;
+    let context: string;
 
     try {
         context = await extractTextFromPdfBuffer(file.buffer);
     } catch (error) {
-        // TODO Send message
+        await sendBotMessage(project, "Mhmm. I'm currently unable to extract any todos from the specs file you uploaded.")
         return
     }
 
     const todos = await extractTodosFromSpec(context);
     if (todos.length === 0) {
-        // TODO Send message
+        await sendBotMessage(project, "Mhmm. I'm currently unable to extract any todos from the specs file you uploaded.")
         return
     }
 
 
-    await Promise.all(todos.map(async (todo) => {
+    const rawDbTodos = todos.map((todo) => {
         try {
             const dbTodo = new Todo();
             dbTodo.title = todo.name;
@@ -92,13 +92,21 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
             dbTodo.status = TodoStatusEnum.PENDING;
             dbTodo.priority = TodoPriorityEnum.MEDIUM;
             dbTodo.project = project;
-            await todoRepository.save(dbTodo);
+            return dbTodo
         } catch (error) {
-
+            return null;
         }
-    }));
+    });
 
-    // TODO Send message.
+    const dbTodos = rawDbTodos.filter((todo) => todo != null);
+
+    await todoRepository.save(dbTodos);
+
+    await sendBotMessage(project,
+        "I just had a quick look at the project specifications you uploaded and I have created a couple TODO tasks to help the team get started.\n" +
+        `${dbTodos.map((todo) => todo.title).join("\n")}\n` +
+        "Go have a look at them now and assign some members"
+    )
 }
 
 // GET /projects/:projectId

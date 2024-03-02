@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
 import {Project} from "../project/project.model";
 import {User} from "../user/user.model";
 
@@ -12,7 +12,7 @@ export class Message {
     @Column()
     content: string
     
-    @Column()
+    @CreateDateColumn()
     createdAt: Date
 
     @ManyToOne(() => Project, (project) => project.messages)
