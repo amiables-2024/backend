@@ -7,6 +7,7 @@ import {
     projectTodosEdit,
     projectTodosGet
 } from "../controllers/projects/todos/projects.todos.controller";
+import {projectsCreate, projectsGet} from "../controllers/projects/projects.controller";
 
 const router = express.Router();
 
@@ -16,10 +17,10 @@ const fileHandler = multer();
 router.use(authMiddleware);
 
 // GET /projects
-router.get('/')
+router.get('/', projectsGet)
 
 // POST /projects
-router.post('/')
+router.post('/', fileHandler.single('spec'), projectsCreate)
 
 // GET /projects/:projectId/files
 router.get('/:projectId/files', projectFilesGet);
