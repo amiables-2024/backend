@@ -2,6 +2,7 @@ import {AuthenticatedController} from "../../../types/express.types";
 import {projectRepository, todoRepository, userRepository} from "../../../database/database";
 import {Todo} from "../../../models/todo/todo.model";
 import {TodoPriorityEnum, TodoStatusEnum} from "../../../types/models.types";
+import {todoStatusFromString} from "../../../utils/misc.util";
 
 // GET /projects/:projectId/todos
 export const projectTodosGet: AuthenticatedController = async (request, response) => {
@@ -46,12 +47,13 @@ export const projectTodosCreate: AuthenticatedController = async (request, respo
     todo.project = project;
 
     try {
-        await projectRepository.save(todo);
+        await todoRepository.save(todo);
         return response.status(201).json({
             success: true,
             data: `Successfully created your new todo item: ${title}`
         })
     } catch (error) {
+        console.error(error);
         return response.status(400).json({
             success: false,
             data: `An error occurred while creating your todo item`
@@ -62,13 +64,13 @@ export const projectTodosCreate: AuthenticatedController = async (request, respo
 
 // PATCH /projects/:projectId/todos/:todoId
 export const projectTodosEdit: AuthenticatedController = async (request, response) => {
-    const { todoId} = request.params;
+    const {todoId} = request.params;
 
     const todo = await todoRepository.findOneBy({id: todoId});
     if (!todo)
         return response.status(404).json({success: false, data: "No todo with that id exists"});
 
-    const {title, description, assigneeId} = request.body;
+    const {title, description, assigneeId, status} = request.body;
 
     if (title)
         todo.title = title;
@@ -77,14 +79,21 @@ export const projectTodosEdit: AuthenticatedController = async (request, respons
         todo.description = description;
 
     if (assigneeId) {
-        const assignee =await userRepository.findOneBy({id: assigneeId});
+        const assignee = await userRepository.findOneBy({id: assigneeId});
         if (assignee) {
             todo.assignee = assignee;
         }
     }
 
+    if (status) {
+        const todoStatus = todoStatusFromString(status);
+        if (todoStatus) {
+            todo.status = todoStatus;
+        }
+    }
+
     try {
-        await projectRepository.save(todo);
+        await todoRepository.save(todo);
         return response.status(201).json({
             success: true,
             data: `Successfully updated your todo item`

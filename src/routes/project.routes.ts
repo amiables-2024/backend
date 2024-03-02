@@ -22,6 +22,9 @@ router.get('/', projectsGet)
 // POST /projects
 router.post('/', fileHandler.single('spec'), projectsCreate)
 
+// GET /projects/:projectId
+router.get('/:projectId', projectsGet);
+
 // GET /projects/:projectId/files
 router.get('/:projectId/files', projectFilesGet);
 
@@ -39,7 +42,7 @@ router.get('/:projectId/todos', projectTodosGet);
 router.post('/:projectId/todos', projectTodosCreate);
 
 // PATCH /projects/:projectId/todos/:todoId
-router.post('/:projectId/todos/:todoId', projectTodosEdit);
+router.patch('/:projectId/todos/:todoId', projectTodosEdit);
 
 // DELETE /projects/:projectId/todos
 

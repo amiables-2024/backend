@@ -100,3 +100,20 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
 
     // TODO Send message.
 }
+
+// GET /projects/:projectId
+export const projectGet: AuthenticatedController = async (request, response) => {
+    const {projectId} = request.params;
+
+    const project = await projectRepository.findOne({
+        where: {id: projectId}
+    });
+
+    if (!project)
+        return response.status(404).json({success: false, data: "Invalid project id provided"})
+
+    return response.status(200).json({
+        success: true,
+        data: project
+    })
+}
