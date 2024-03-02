@@ -1,12 +1,12 @@
 import 'dotenv/config'
 import "reflect-metadata"
-
 import express, {Express} from 'express';
 import * as http from "http";
 import * as socket from "socket.io";
 import cors from "cors";
 import {routesRouter} from "./routes/routes";
 import {initDatabase} from "./database/database";
+import path from 'node:path';
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -25,6 +25,8 @@ app.use(cors({
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '../src/public')));
 
 app.use(routesRouter);
 

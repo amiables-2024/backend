@@ -1,15 +1,18 @@
 import express from "express";
 import {authRoutes} from "./auth.routes";
 import {projectsRoute} from "./project.routes";
+import {avatarRoutes} from "./avatars.routes";
 
 const router = express.Router();
 
 // REQ /auth/
 router.use('/auth', authRoutes);
 
+// REQ /avatars/
+router.use('/avatars', avatarRoutes);
+
 // REQ /projects/
 router.use('/projects', projectsRoute);
-
 
 // GET /
 router.get('/', (req, res) => {

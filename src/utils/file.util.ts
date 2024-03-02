@@ -1,7 +1,10 @@
 // In MB
 import {Project} from "../models/project/project.model";
-import {deleteFileFromS3, getFilesInFolder, uploadFileToS3} from "./aws.util";
+import {deleteFileFromS3, getFilesInFolder, retrieveFileFromS3, uploadFileToS3} from "./aws.util";
 import {ObjectList} from "aws-sdk/clients/s3";
+import {User} from "../models/user/user.model";
+
+const IMAGE_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/gif']
 
 const FILE_SIZE_LIMIT = 20;
 
@@ -38,7 +41,6 @@ export const saveFile = async (project: Project, file: Express.Multer.File): Pro
     });
 }
 
-
 export const addFolder = async (project: Project, folderName: string): Promise<string> => {
     return "";
 }
@@ -63,5 +65,37 @@ export const getProjectFiles = async (project: Project): Promise<ObjectList> => 
     return new Promise(async (resolve, reject) => {
         const filePath: string = getProjectBaseFilePath(project);
         resolve(getFilesInFolder(filePath));
+    });
+}
+
+export const setAvatar = async (user: User, file: Express.Multer.File): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        // Ensures only JPEGs, PNGs and GIFS are uploaded.
+        if (!IMAGE_CONTENT_TYPES.includes(file.mimetype)) {
+            return reject("Invalid image type provided")
+        }
+
+        // Ensures the file has a value and isn't greater than the limit.
+        if (file.size <= 0 || (file.size / (1024 * 1024)) > FILE_SIZE_LIMIT) {
+            return reject("File is too big")
+        }
+
+        // Create the filepath
+        const filePath: string = `avatars/${user.id.toString()}`
+
+        // Upload the file to S3
+        const storedFile = await uploadFileToS3(filePath, file.mimetype, file.buffer)
+        resolve(storedFile.url);
+    });
+}
+
+export const getAvatar = async (user: User): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+        // Construct the filepath
+        const filePath: string = `avatars/${user.id.toString()}`
+
+        // Attempt to get the file from S3
+        const data = await retrieveFileFromS3(filePath)
+        resolve(data);
     });
 }
