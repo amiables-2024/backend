@@ -10,6 +10,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
+    "files": [
+      "src/*.ts",
+      "src/model/*.ts"
+    ],
   },
   "include": [
     "./src/**/*"
