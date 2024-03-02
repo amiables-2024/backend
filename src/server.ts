@@ -80,7 +80,7 @@ initDatabase()
     .then(() => {
         console.log(`Connected to database. Starting web server at ${new Date().toString()}...`)
         const serverPort = process.env.PORT || 3000
-        app.listen(serverPort, () => {
+        server.listen(serverPort, () => {
             console.log(`Server running on port ${serverPort} (http://localhost:${serverPort})`);
         });
     })
