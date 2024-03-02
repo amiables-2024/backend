@@ -32,7 +32,7 @@ export const projectTodosCreate: AuthenticatedController = async (request, respo
     if (!project)
         return response.status(404).json({success: false, data: "No project with that id exists"})
 
-    const {title, description} = request.body;
+    const {title, description, status} = request.body;
 
     if (!title)
         return response.status(422).json({success: false, data: 'Missing title field'})
@@ -43,6 +43,12 @@ export const projectTodosCreate: AuthenticatedController = async (request, respo
     todo.title = title;
     todo.description = description;
     todo.status = TodoStatusEnum.PENDING;
+    if (status) {
+        const todoStatus = todoStatusFromString(status);
+        if (todoStatus) {
+            todo.status = todoStatus;
+        }
+    }
     todo.priority = TodoPriorityEnum.MEDIUM;
     todo.project = project;
 
