@@ -4,6 +4,7 @@ import {getIo} from "../socketio/socketio";
 import {messageRepository, userRepository} from "../database/database";
 import {Message} from "../models/message/message.model";
 import {BroadcastMessageData} from "../types/socketio.types";
+import {BOT_USER_ID} from "./constants.util";
 
 /**
  * Checks if an email is valid

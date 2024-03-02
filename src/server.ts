@@ -8,7 +8,7 @@ import {routesRouter} from "./routes/routes";
 import {initDatabase, messageRepository, projectRepository, userRepository} from "./database/database";
 import path from 'node:path';
 import {initSocketIOServer} from "./socketio/socketio";
-import {BroadcastMessageData, UserSendMessageData} from "./types/socketio.types";
+import {BroadcastMessageData, JoinRoomData, UserSendMessageData} from "./types/socketio.types";
 import {Message} from "./models/message/message.model";
 
 const origins = [
@@ -43,7 +43,7 @@ app.use(routesRouter);
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("join_room", (projectId) => {
+    socket.on("join_room", ({projectId}: JoinRoomData) => {
         socket.join(projectId);
     });
 
@@ -68,8 +68,12 @@ io.on("connection", (socket) => {
                 message.content = data.content;
                 message.user = user;
                 message.project = project;
-                const savedMessage = await messageRepository.save(message);
-                broadcastData.id = savedMessage.id;
+                try {
+                    const savedMessage = await messageRepository.save(message);
+                    broadcastData.id = savedMessage.id;
+                } catch (error) {
+
+                }
             }
         }
 

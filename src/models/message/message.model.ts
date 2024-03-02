@@ -8,8 +8,8 @@ export class Message {
 
     @PrimaryGeneratedColumn('uuid')
     id: string
-    
-    @Column()
+
+    @Column({type: "longtext"})
     content: string
     
     @CreateDateColumn()

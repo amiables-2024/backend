@@ -21,7 +21,6 @@ export const extractTodosFromSpec = async (spec: string): Promise<any[]> => {
             ],
         });
         const answer = response.choices[0].message.content;
-        console.log(answer);
         const array = JSON.parse(answer);
         if (Array.isArray(array))
             return array;

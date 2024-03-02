@@ -12,7 +12,7 @@ export class Todo {
     @Column()
     title: string
 
-    @Column()
+    @Column({type: "text"})
     description: string
 
     @CreateDateColumn()

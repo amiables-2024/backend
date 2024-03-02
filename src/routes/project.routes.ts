@@ -8,6 +8,7 @@ import {
     projectTodosGet
 } from "../controllers/projects/todos/projects.todos.controller";
 import {projectGet, projectsCreate, projectsGet} from "../controllers/projects/projects.controller";
+import {projectMessagesCreate, projectMessagesGet} from "../controllers/projects/messages/project.messages.controller";
 
 const router = express.Router();
 
@@ -45,5 +46,11 @@ router.post('/:projectId/todos', projectTodosCreate);
 router.patch('/:projectId/todos/:todoId', projectTodosEdit);
 
 // DELETE /projects/:projectId/todos
+
+// GET /projects/:projectId/messages
+router.get('/:projectId/messages', projectMessagesGet);
+
+// POST /projects/:projectId/messages
+router.post('/:projectId/messages', projectMessagesCreate);
 
 export const projectsRoute = router;

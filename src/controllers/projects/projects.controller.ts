@@ -83,7 +83,6 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
         return
     }
 
-
     const rawDbTodos = todos.map((todo) => {
         try {
             const dbTodo = new Todo();
@@ -104,8 +103,8 @@ const projectSpecHandling = async (project: Project, file: Express.Multer.File) 
 
     await sendBotMessage(project,
         "I just had a quick look at the project specifications you uploaded and I have created a couple TODO tasks to help the team get started.\n" +
-        `${dbTodos.map((todo) => todo.title).join("\n")}\n` +
-        "Go have a look at them now and assign some members"
+        `- ${dbTodos.map((todo) => todo.title).join("\n- ")}\n\n` +
+        "Go have a look at them now and assign some members to get the ball rolling!"
     )
 }
 
