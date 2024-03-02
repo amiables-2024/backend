@@ -8,21 +8,27 @@ import {Todo} from "../todo/todo.model";
 export class Project {
 
     @PrimaryGeneratedColumn('uuid')
-    id: string
+    id?: string
 
     @Column()
     name: string
 
-    @ManyToMany(() => User, (user) => user.projects)
+    @ManyToMany(() => User, (user) => user.projects, {
+        cascade: true
+    })
     members: User[];
 
     @Column()
     driveFolderPath: string
 
-    @ManyToOne(() => Message, (message) => message.project)
+    @ManyToOne(() => Message, (message) => message.project, {
+        cascade: true
+    })
     messages: Message[]
 
-    @OneToMany(() => Todo, (todo) => todo.project)
+    @OneToMany(() => Todo, (todo) => todo.project, {
+        cascade: true
+    })
     todos: Todo[]
 
 }

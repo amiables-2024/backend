@@ -1,10 +1,30 @@
 import {AuthenticatedController} from "../../../types/express.types";
-import {saveFile} from "../../../utils/file.util";
+import {getProjectFiles, saveFile} from "../../../utils/file.util";
 import {projectRepository} from "../../../database/database";
 
 // GET /projects/:projectId/files
 export const projectFilesGet: AuthenticatedController = async (request, response) => {
+    const {projectId} = request.params;
 
+    const project = await projectRepository.findOne({
+        where: {id: projectId}
+    });
+
+    if (!project)
+        return response.status(404).json({success: false, data: "Invalid project id provided"})
+
+    try {
+        const files = getProjectFiles(project);
+        response.status(200).json({
+            success: true,
+            data: files
+        })
+    } catch (error) {
+        response.status(400).json({
+            success: false,
+            data: "Unable to retrieve files. Please try again later."
+        })
+    }
 }
 
 // POST /projects/:projectId/files
@@ -20,7 +40,7 @@ export const projectFilesUpload: AuthenticatedController = async (request, respo
     });
 
     if (!project)
-        return response.status(404).json({success: false, message: "Invalid project id provided"})
+        return response.status(404).json({success: false, data: "Invalid project id provided"})
 
     const failedUploads = []
     for (const file of files) {

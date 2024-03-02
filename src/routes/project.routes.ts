@@ -10,6 +10,13 @@ const fileHandler = multer();
 // /projects is a protected route that requires authentication
 router.use(authMiddleware);
 
+// GET /projects
+router.get('/')
+
+// POST /projects
+router.post('/')
+
+
 // GET /projects/:projectId/files
 router.get('/:projectId/files', projectFilesGet);
 

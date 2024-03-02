@@ -23,16 +23,24 @@ export class User {
     @Column()
     password: string
 
-    @ManyToMany(() => Project, (project) => project.members)
+    @ManyToMany(() => Project, (project) => project.members, {
+        cascade: true
+    })
     projects: Project[]
 
-    @OneToMany(() => Message, (message) => message.user)
+    @OneToMany(() => Message, (message) => message.user, {
+        cascade: true
+    })
     messages: Message[]
 
-    @OneToMany(() => Todo, (todo) => todo.assignee)
+    @OneToMany(() => Todo, (todo) => todo.assignee, {
+        cascade: true
+    })
     todos: Todo[]
 
-    @OneToMany(() => UserAvailability, (availability) => availability.user)
+    @OneToMany(() => UserAvailability, (availability) => availability.user, {
+        cascade: true
+    })
     availabilities: UserAvailability[]
 
 }

@@ -27,10 +27,14 @@ export class Todo {
     @Column({type: "enum", enum: TodoPriorityEnum})
     priority: TodoPriorityEnum;
 
-    @ManyToOne(() => User, (user) => user.todos)
+    @ManyToOne(() => User, (user) => user.todos, {
+        cascade: true
+    })
     assignee: Relation<User>
 
-    @ManyToOne(() => Project, (project) => project.todos)
+    @ManyToOne(() => Project, (project) => project.todos, {
+        cascade: true
+    })
     project: Relation<Project>
 
 }

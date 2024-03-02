@@ -15,10 +15,14 @@ export class Message {
     @Column()
     createdAt: Date
 
-    @ManyToOne(() => Project, (project) => project.messages)
+    @ManyToOne(() => Project, (project) => project.messages, {
+        cascade: true
+    })
     project: Relation<Project>
 
-    @ManyToOne(() => User, (user) => user.messages)
+    @ManyToOne(() => User, (user) => user.messages, {
+        cascade: true
+    })
     user: Relation<User>
     
     

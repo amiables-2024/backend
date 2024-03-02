@@ -17,7 +17,9 @@ export class UserAvailability {
     @Column()
     endRange: string
 
-    @ManyToOne(() => User, (user) => user.availabilities)
+    @ManyToOne(() => User, (user) => user.availabilities, {
+        cascade: true
+    })
     user: Relation<User>
 
 }
