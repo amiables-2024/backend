@@ -8,17 +8,22 @@ import {routesRouter} from "./routes/routes";
 import {initDatabase} from "./database/database";
 import path from 'node:path';
 
+const origins = [
+    "https://main.d3i9env3ux4lc9.amplifyapp.com",
+    /^http:\/\/localhost:./
+]
+
 const app: Express = express();
 const server = http.createServer(app);
 const io = new socket.Server(server, {
     cors: {
-        origin: "https://main.d3i9env3ux4lc9.amplifyapp.com",
+        origin: origins,
         methods: ["GET", "POST"]
     }
 });
 
 app.use(cors({
-    origin: "https://main.d3i9env3ux4lc9.amplifyapp.com",
+    origin: origins,
     credentials: true,
     optionsSuccessStatus: 200
 }))
