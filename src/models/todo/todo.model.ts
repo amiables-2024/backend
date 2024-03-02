@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Relation} from "typeorm"
 import {Project} from "../project/project.model";
 import {User} from "../user/user.model";
 import {TodoPriorityEnum, TodoStatusEnum} from "../../types/models.types";
@@ -15,11 +15,11 @@ export class Todo {
     @Column()
     description: string
 
-    @Column()
+    @CreateDateColumn()
     createdAt: Date
 
-    @Column()
-    dueDate: Date
+    @Column({nullable: true})
+    dueDate?: Date
 
     @Column({type: "enum", enum: TodoStatusEnum})
     status: TodoStatusEnum;
@@ -28,7 +28,7 @@ export class Todo {
     priority: TodoPriorityEnum;
 
     @ManyToOne(() => User, (user) => user.todos)
-    assignee: Relation<User>
+    assignee?: Relation<User>
 
     @ManyToOne(() => Project, (project) => project.todos)
     project: Relation<Project>
