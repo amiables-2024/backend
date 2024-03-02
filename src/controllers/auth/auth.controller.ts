@@ -4,6 +4,7 @@ import {compare, hash} from "bcrypt";
 import {userRepository} from "../../database/database";
 import {signJWT} from "../../utils/jwt.util";
 import {isValidEmail} from "../../utils/misc.util";
+import {DEFAULT_AVATAR_IMAGE_BASE64} from "../../utils/constants.util";
 
 // POST /auth/register
 export const authRegister: Controller = async (request, response) => {
