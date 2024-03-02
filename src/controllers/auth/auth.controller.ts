@@ -34,7 +34,11 @@ export const authRegister: Controller = async (request, response) => {
         .json({
             success: true,
             data: {
-                token: signJWT({id: savedUser.id})
+                token: signJWT({id: savedUser.id}),
+                user: {
+                    id: savedUser.id,
+                    name: savedUser.name
+                }
             }
         })
 }
@@ -59,7 +63,11 @@ export const authLogin: Controller = async (request, response) => {
         .json({
             success: true,
             data: {
-                token: signJWT({id: user.id})
+                token: signJWT({id: user.id}),
+                user: {
+                    id: user.id,
+                    name: user.name
+                }
             }
         })
 }
