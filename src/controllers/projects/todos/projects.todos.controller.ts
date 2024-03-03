@@ -76,23 +76,23 @@ export const projectTodosEdit: AuthenticatedController = async (request, respons
     if (!todo)
         return response.status(404).json({success: false, data: "No todo with that id exists"});
 
-    const {title, description, assigneeId, status} = request.body;
+    const {title, description, assigneeId, status} = request.query;
 
     if (title)
-        todo.title = title;
+        todo.title = (title as string);
 
     if (description)
-        todo.description = description;
+        todo.description = (description as string);
 
     if (assigneeId) {
-        const assignee = await userRepository.findOneBy({id: assigneeId});
+        const assignee = await userRepository.findOneBy({id: (assigneeId as string)});
         if (assignee) {
             todo.assignee = assignee;
         }
     }
 
     if (status) {
-        const todoStatus = todoStatusFromString(status);
+        const todoStatus = todoStatusFromString((status as string));
         if (todoStatus) {
             todo.status = todoStatus;
         }
