@@ -41,8 +41,6 @@ app.use(express.static(path.join(__dirname, '../src/public')));
 app.use(routesRouter);
 
 io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
-
     socket.on("join_room", ({projectId}: JoinRoomData) => {
         socket.join(projectId);
     });
@@ -79,7 +77,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("A user disconnected:", socket.id);
+
     });
 });
 

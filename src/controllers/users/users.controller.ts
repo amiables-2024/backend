@@ -3,7 +3,7 @@ import {userRepository} from "../../database/database";
 
 // GET /users/search
 export const usersSearch: Controller = async (request, response) => {
-    const {query} = request.body;
+    const {query} = request.query;
 
     if (!query)
         return response.status(201).json({
@@ -11,10 +11,12 @@ export const usersSearch: Controller = async (request, response) => {
             data: []
         });
 
+    const querySearch: string = query as string;
+
     const allUsers = await userRepository.find();
     const users = allUsers
-        .filter((user) => user.name.toLowerCase().includes(query.toLowerCase()) ||
-            user.email.toLowerCase().includes(query.toLowerCase()))
+        .filter((user) => user.name.toLowerCase().includes(querySearch.toLowerCase()) ||
+            user.email.toLowerCase().includes(querySearch.toLowerCase()));
 
     return response.status(201).json({
         success: true,
