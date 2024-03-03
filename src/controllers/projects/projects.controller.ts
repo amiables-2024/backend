@@ -1,5 +1,5 @@
 import {AuthenticatedController} from "../../types/express.types";
-import {projectRepository, todoRepository} from "../../database/database";
+import {projectRepository, todoRepository, userRepository} from "../../database/database";
 import {Project} from "../../models/project/project.model";
 import {extractTextFromPdfBuffer} from "../../utils/pdf.util";
 import {extractTodosFromSpec} from "../../utils/ai.util";
@@ -32,7 +32,7 @@ export const projectsGet: AuthenticatedController = async (request, response) =>
 
 // POST /projects
 export const projectsCreate: AuthenticatedController = async (request, response) => {
-    const {name} = request.body;
+    const {name, members} = request.body;
     const file = request.file;
 
     if (!name)
@@ -40,7 +40,21 @@ export const projectsCreate: AuthenticatedController = async (request, response)
 
     const project = new Project()
     project.name = name;
-    project.members = [request.user];
+
+    const membersArray = [request.user];
+
+    if (members) {
+        for (const memberId of members.split(";")) {
+            if (memberId != request.user.id) {
+                const member = await userRepository.findOneBy({id: memberId});
+                if (member) {
+                    membersArray.push(member);
+                }
+            }
+        }
+    }
+
+    project.members = membersArray;
 
     try {
         const savedProject = await projectRepository.save(project);
