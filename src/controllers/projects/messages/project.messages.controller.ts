@@ -15,7 +15,7 @@ export const projectMessagesGet: AuthenticatedController = async (request, respo
         },
         order: {
             messages: {
-                createdAt: "DESC"
+                createdAt: "ASC"
             }
         }
     });

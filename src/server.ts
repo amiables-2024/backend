@@ -48,8 +48,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send_msg", async (data: UserSendMessageData) => {
-        console.log(data, "DATA");
-
         const broadcastData: BroadcastMessageData = {
             id: "",
             content: data.content,
